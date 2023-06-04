@@ -5,18 +5,24 @@ use hex;
 // Make the hash based on the image and an external key
 fn compute_image_hash(image: &RgbaImage, key: &str) -> String {
     let mut hasher = Sha512::new();
+    let mut image_hasher = Sha512::new();
 
     // Hash the image pixels
     for pixel in image.pixels() {
         let pixel_data = pixel.0;
         hasher.update(&pixel_data);
+        image_hasher.update(&pixel_data);
     }
+
+    let final_image_hash = image_hasher.finalize();
 
     // Hash the key
     hasher.update(key.as_bytes());
 
     let hash = hasher.finalize();
     let hash_string = hex::encode(hash);
+
+    println!("Generated Image Hash: {}", hex::encode(final_image_hash));
 
     println!("Generated Hash: {}", hash_string);
 
